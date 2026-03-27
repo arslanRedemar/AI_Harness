@@ -148,6 +148,37 @@
 
 ---
 
+---
+
+## 2단계 확장 — 미팅 인텔리전스 에이전트
+
+> 상세 설계는 [meeting_agent.md](./meeting_agent.md) 참고
+
+미팅 전·중·후 전 과정에 AI가 실시간으로 개입하는 전용 에이전트 구조.
+
+### 추가 스킬
+
+| 스킬명 | 입력 | 출력 | 설명 |
+|--------|------|------|------|
+| `pre-meeting-briefer` | 과거 미팅 로그 전체 | 브리핑 문서 | 결정 사항·보류 항목·고객 성향을 요약하여 미팅 전 제공 |
+| `gap-alert-generator` | 마지막 미팅 날짜 + 미결 항목 | 재확인 항목 목록 | 공백 기간이 길수록 잊기 쉬운 항목을 우선 추출 |
+| `realtime-cps-tagger` | 실시간 발화 텍스트 | CPS 분류 태그 + 요약 | 대화 중 발언을 Context / Problem / Solution으로 즉시 분류 |
+| `suggestion-engine` | 현재 대화 + 과거 미팅 로그 | FDE용 제안 메시지 | 놓친 맥락·반복 주제·결정 기회를 감지해 FDE에게 제안 |
+| `contradiction-detector` | 현재 발언 + 기존 결정 사항 | 충돌 경보 + 근거 | 이전 합의와 어긋나는 발언을 실시간 감지 |
+| `abstract-request-resolver` | 추상적 고객 발언 | 구체화된 요구사항 + 레퍼런스 | 웹 검색으로 추상적 요구를 측정 가능한 지표로 전환 |
+| `post-meeting-documenter` | 전체 미팅 로그 | 결정 사항 + 미결 항목 + 액션 아이템 | 미팅 종료 후 산출물 자동 생성 |
+
+### 추가 에이전트
+
+| 에이전트명 | 구성 스킬 | 설명 |
+|------------|-----------|------|
+| `pre-meeting-agent` | `pre-meeting-briefer` + `gap-alert-generator` | 미팅 시작 전 브리핑 패키지 자동 생성 |
+| `live-meeting-agent` | `realtime-cps-tagger` + `suggestion-engine` + `contradiction-detector` + `abstract-request-resolver` | 미팅 중 실시간 동반 |
+| `post-meeting-agent` | `post-meeting-documenter` + `cps-updater` | 미팅 후 문서 생성 및 CPS 갱신 |
+| `meeting-intelligence-agent` | 위 세 에이전트 통합 | 전·중·후 전 과정을 하나의 세션으로 관리 |
+
+---
+
 ## 전체 스킬·에이전트 맵
 
 ```
@@ -158,6 +189,12 @@
 2단계  meeting-transcriber, meeting-summarizer, cps-writer, cps-updater
        prd-writer, build-vs-buy-analyzer
        → meeting-log-agent, plan-document-agent
+
+2단계+ pre-meeting-briefer, gap-alert-generator, realtime-cps-tagger
+(미팅  suggestion-engine, contradiction-detector, abstract-request-resolver
+전용)  post-meeting-documenter
+       → pre-meeting-agent, live-meeting-agent, post-meeting-agent
+       → meeting-intelligence-agent (통합)
 
 3단계  principle-definer, domain-glossary-builder, hierarchy-designer
        architecture-specifier, mental-model-mapper, tech-stack-recommender
