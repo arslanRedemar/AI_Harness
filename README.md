@@ -85,6 +85,18 @@ FDE가 시스템 구성 요소 정의
 
 ---
 
+## 미팅 인텔리전스 에이전트 (MIA)
+
+AX 팀과 고객사 간 미팅에 AI 에이전트가 실시간으로 참여하는 구조. 과거 미팅 기록 + Domain KB(RAG) + 웹 검색을 통합하여 미팅 전·중·후 전 과정을 지원한다.
+
+| 문서 | 내용 |
+|------|------|
+| [meeting_agent.md](./meeting_agent.md) | MIA 개념 설계 및 3단계 작동 구조 |
+| [meeting_room_visualization.md](./meeting_room_visualization.md) | 회의실 구성 및 화면 ASCII 시각화 |
+| [meeting_agent_visualization.html](./meeting_agent_visualization.html) | 인터랙티브 HTML 프론트엔드 시각화 (브라우저에서 바로 열기) |
+
+---
+
 ## 왜 이것이 중요한가
 
 AI 코딩 도구가 보편화되면서 초기 구현 자체는 쉬워졌다. 문제는 그 다음이다.
