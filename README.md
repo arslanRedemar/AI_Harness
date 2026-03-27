@@ -81,6 +81,7 @@ FDE가 시스템 구성 요소 정의
 ```
 
 자세한 단계별 내용은 [workflow.md](./workflow.md)를 참고한다.
+각 단계에서 필요한 클로드 스킬 및 에이전트 목록은 [skills_and_agents.md](./skills_and_agents.md)를 참고한다.
 
 ---
 
