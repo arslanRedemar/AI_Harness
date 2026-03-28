@@ -79,41 +79,15 @@ Solution ──▶  기능 요구사항, 수락 기준, 스코프 경계
 
 ### Phase 3 — PRD 초안 생성
 
-아래 구조로 PRD를 자동 생성한다. 각 항목에 CPS 출처를 태깅한다.
+확정된 PRD 템플릿 형식으로 초안을 생성한다. 각 항목에 CPS 출처를 태깅한다.
 
-```markdown
-# PRD: [프로젝트명]
+**PRD 문서 형식**: [prd_template.md](./prd_template.md) 참고
+**작성 예시**: [prd_example.md](./prd_example.md) 참고
 
-## 1. 배경 및 목적
-  - 비즈니스 배경          ← Context 출처
-  - 해결하려는 핵심 문제   ← Problem 출처
-
-## 2. 목표 및 성공 지표
-  - 비즈니스 목표          ← Problem 출처
-  - KPI / 성공 지표        ← Problem + Context 출처
-
-## 3. 사용자 페르소나
-  - 페르소나별 목표·Pain Point ← Context 출처
-
-## 4. 기능 요구사항
-  - Epic / Feature / Story 계층 ← Solution 출처
-  - 각 기능별 수락 기준(AC)
-
-## 5. 비기능 요구사항 (NFR)
-  - 성능 / 보안 / 확장성 / 가용성 ← Context 출처
-
-## 6. 스코프 경계
-  - In Scope
-  - Out of Scope              ← 미팅에서 명시적으로 제외된 항목
-  - 미결 사항 (TBD)           ← 보류 중인 Solution 항목
-
-## 7. 의존성 및 제약 조건
-  - 외부 시스템 연동
-  - 기술 스택 제약            ← 확정된 기술 결정
-
-## 8. 요구사항 추적성 매트릭스
-  - 요구사항 ID ↔ CPS 출처 미팅 ↔ 발화 원문
-```
+**출처 표기 규칙**
+- 형식: `[^MN-X]` — N: 미팅 번호, X: C(Context) / P(Problem) / S(Solution)
+- 예시: `[^M3-S]` → Meeting 3의 Solution 발화
+- 모든 출처는 문서 하단 "출처 색인" 섹션에 원문과 함께 정리
 
 **할루시네이션 방지 원칙**: 에이전트는 CPS에 없는 요구사항을 임의로 추가하지 않는다. 없는 항목은 TBD로 표기하고 보완 질문을 생성한다.
 
