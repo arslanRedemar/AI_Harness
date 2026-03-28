@@ -150,9 +150,44 @@
 
 ---
 
+## 2단계 확장 — PRD 파이프라인
+
+> 상세 스킬 명세는 [prd_skills.md](../prd/prd_skills.md) / 방법론은 [prd_methodology.md](../prd/prd_methodology.md) 참고
+
+CPS가 충분히 구체화된 이후 PRD로 전환하는 전 과정을 자동화하는 스킬·에이전트 구조.
+
+### 추가 스킬
+
+| 스킬명 | 입력 | 출력 | 설명 |
+|--------|------|------|------|
+| `cps-completeness-checker` | CPS 누적 전체 | 완성도 점수 + 미흡 항목 목록 | PRD 착수 가능 여부 판단, 미흡 항목은 다음 미팅 안건으로 전환 |
+| `persona-extractor` | CPS Context 누적 | 페르소나 카드 목록 | 사용자 유형별 목표·행동·Pain Point·민감 조건 구조화 |
+| `goal-metric-definer` | CPS Problem 누적 | 목표-KPI-측정방법 테이블 | "현재 상태 → 목표 상태 → KPI → 측정 방법" 체인 변환 |
+| `feature-distiller` | CPS Solution 확정 항목 | Epic / Feature / Story 계층 | 확정된 Solution만 골라 기능 계층 구조로 분해 |
+| `acceptance-criteria-generator` | Feature 목록 | Feature별 AC (Given-When-Then) | 각 기능에 테스트 가능한 수락 기준 생성 |
+| `nfr-extractor` | CPS Context 누적 | NFR 목록 (카테고리-지표-목표값) | 성능·가용성·보안·확장성·접근성 비기능 요구사항 추출 |
+| `scope-boundary-detector` | CPS 전체 | In / Out / TBD 경계 목록 | 명시·암묵적 제외 항목 감지, 제외 근거 출처 태깅 |
+| `prd-drafter` | 증류 스킬 출력 전체 + CPS | PRD 초안 (출처 태그 포함) | CPS 출처 없는 항목은 생성 않고 TBD 처리 (할루시네이션 방지) |
+| `requirement-validator` | PRD 초안 + CPS | 검증 리포트 (VALID / HALLUCINATED / MISSING) | PRD↔CPS 역방향·순방향 교차 검증, 수치 불일치 감지 |
+| `prd-gap-detector` | PRD 초안 | 보완 질문 목록 + 다음 미팅 안건 | 섹션 누락·모호 표현·AC 없는 기능 감지 |
+| `dependency-mapper` | Feature 목록 + 기술 스택 | 의존성 맵 + 크리티컬 패스 | 기능 간 선행 관계 및 외부 시스템 연동 의존성 매핑 |
+| `prd-change-detector` | 현재 발화 + 확정 PRD | 변경 경보 + 영향도 분석 | PRD 확정 이후 미팅에서 스코프 변경·신규 요구 실시간 감지 |
+| `traceability-matrix-builder` | PRD 확정본 + CPS | 요구사항 추적성 매트릭스 | 요구사항 ID ↔ 출처 미팅 ↔ 발화 원문 매핑 |
+
+### 추가 에이전트
+
+| 에이전트명 | 구성 스킬 | 설명 |
+|------------|-----------|------|
+| `prd-readiness-agent` | `cps-completeness-checker` + `prd-gap-detector` | PRD 착수 가능 여부 판단, 부족한 부분을 다음 미팅 안건으로 전환 |
+| `prd-drafting-agent` | `persona-extractor` + `goal-metric-definer` + `feature-distiller` + `acceptance-criteria-generator` + `nfr-extractor` + `scope-boundary-detector` + `dependency-mapper` + `prd-drafter` | CPS 전체를 읽고 PRD 전체 초안 자동 생성 |
+| `prd-validation-agent` | `requirement-validator` + `prd-gap-detector` + `traceability-matrix-builder` | PRD 초안의 완결성·일치성 검증 및 추적성 매트릭스 생성 |
+| `prd-maintenance-agent` | `prd-change-detector` + `contradiction-detector` | PRD 확정 이후 미팅에서 변경 사항 실시간 감지 및 영향도 리포트 |
+
+---
+
 ## 2단계 확장 — 미팅 인텔리전스 에이전트
 
-> 상세 설계는 [meeting_agent.md](./meeting_agent.md) 참고
+> 상세 설계는 [meeting_agent.md](../mia/meeting_agent.md) 참고
 
 미팅 전·중·후 전 과정에 AI가 실시간으로 개입하는 전용 에이전트 구조.
 
@@ -196,6 +231,14 @@
        → pre-meeting-agent, live-meeting-agent, post-meeting-agent
        → meeting-intelligence-agent (통합)
 
+2단계+ cps-completeness-checker, persona-extractor, goal-metric-definer
+(PRD   feature-distiller, acceptance-criteria-generator, nfr-extractor
+파이프 scope-boundary-detector, prd-drafter, requirement-validator
+라인)  prd-gap-detector, dependency-mapper, prd-change-detector
+       traceability-matrix-builder
+       → prd-readiness-agent, prd-drafting-agent
+       → prd-validation-agent, prd-maintenance-agent
+
 3단계  principle-definer, domain-glossary-builder, hierarchy-designer
        architecture-specifier, mental-model-mapper, tech-stack-recommender
        → design-analysis-agent, ux-alignment-agent
@@ -228,4 +271,7 @@
 | 🟡 단기 | `daily-monitor-agent` | 납품 후 지속 품질 보장 |
 | 🟢 중기 | `poc-briefing-agent` | 수주 경쟁력 강화 |
 | 🟢 중기 | `code-repair-agent` | 유지보수 단계에서 가치 발휘 |
+| 🟢 중기 | `prd-drafting-agent` | CPS 충분히 쌓인 후 PRD 자동화 효과 극대화 |
+| 🟢 중기 | `prd-validation-agent` | PRD 품질 보증, 할루시네이션 방지 |
 | 🔵 장기 | `eval-tuning-agent` | 충분한 데이터 축적 후 유효 |
+| 🔵 장기 | `prd-maintenance-agent` | PRD 확정 이후 장기 운영 단계에서 가치 발휘 |
