@@ -112,3 +112,11 @@ AI 코딩 도구가 보편화되면서 초기 구현 자체는 쉬워졌다. 문
 ## 이 리포지토리에 대해
 
 Claude Code 환경에서 동작하는 AI Harness 구조를 설계하고 문서화하기 위한 공간이다. FDE(Forward Deployed Engineer)가 엔터프라이즈 AX 현장에서 검증한 방법론을 기반으로, 반복 가능하고 신뢰할 수 있는 AI 구축 프로세스를 축적한다.
+
+---
+
+## 참고 출처
+
+이 리포지토리의 전체 내용은 아래 영상을 참고하여 작성되었다.
+
+- [YouTube — AI Harness Engineering (참고 영상)](https://www.youtube.com/watch?v=A8PMyC7W_vg)
