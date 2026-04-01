@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>aiwg — Skill Description Optimization</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lora', Georgia, serif;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            background: #faf9f5;
+            color: #141413;
+        }
+        h1 { font-family: 'Poppins', sans-serif; color: #141413; }
+        .explainer {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #e8e6dc;
+            color: #b0aea5;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        .summary {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #e8e6dc;
+        }
+        .summary p { margin: 5px 0; }
+        .best { color: #788c5d; font-weight: bold; }
+        .table-container {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            border-collapse: collapse;
+            background: white;
+            border: 1px solid #e8e6dc;
+            border-radius: 6px;
+            font-size: 12px;
+            min-width: 100%;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #e8e6dc;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+        th {
+            font-family: 'Poppins', sans-serif;
+            background: #141413;
+            color: #faf9f5;
+            font-weight: 500;
+        }
+        th.test-col {
+            background: #6a9bcc;
+        }
+        th.query-col { min-width: 200px; }
+        td.description {
+            font-family: monospace;
+            font-size: 11px;
+            word-wrap: break-word;
+            max-width: 400px;
+        }
+        td.result {
+            text-align: center;
+            font-size: 16px;
+            min-width: 40px;
+        }
+        td.test-result {
+            background: #f0f6fc;
+        }
+        .pass { color: #788c5d; }
+        .fail { color: #c44; }
+        .rate {
+            font-size: 9px;
+            color: #b0aea5;
+            display: block;
+        }
+        tr:hover { background: #faf9f5; }
+        .score {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        .score-good { background: #eef2e8; color: #788c5d; }
+        .score-ok { background: #fef3c7; color: #d97706; }
+        .score-bad { background: #fceaea; color: #c44; }
+        .train-label { color: #b0aea5; font-size: 10px; }
+        .test-label { color: #6a9bcc; font-size: 10px; font-weight: bold; }
+        .best-row { background: #f5f8f2; }
+        th.positive-col { border-bottom: 3px solid #788c5d; }
+        th.negative-col { border-bottom: 3px solid #c44; }
+        th.test-col.positive-col { border-bottom: 3px solid #788c5d; }
+        th.test-col.negative-col { border-bottom: 3px solid #c44; }
+        .legend { font-family: 'Poppins', sans-serif; display: flex; gap: 20px; margin-bottom: 10px; font-size: 13px; align-items: center; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-swatch { width: 16px; height: 16px; border-radius: 3px; display: inline-block; }
+        .swatch-positive { background: #141413; border-bottom: 3px solid #788c5d; }
+        .swatch-negative { background: #141413; border-bottom: 3px solid #c44; }
+        .swatch-test { background: #6a9bcc; }
+        .swatch-train { background: #141413; }
+    </style>
+</head>
+<body>
+    <h1>aiwg — Skill Description Optimization</h1>
+    <div class="explainer">
+        <strong>Optimizing your skill's description.</strong> This page updates automatically as Claude tests different versions of your skill's description. Each row is an iteration — a new description attempt. The columns show test queries: green checkmarks mean the skill triggered correctly (or correctly didn't trigger), red crosses mean it got it wrong. The "Train" score shows performance on queries used to improve the description; the "Test" score shows performance on held-out queries the optimizer hasn't seen. When it's done, Claude will apply the best-performing description to your skill.
+    </div>
+
+    <div class="summary">
+        <p><strong>Original:</strong> AI에게 전달할 지침·프롬프트·시스템 메시지·규칙 문서를 작성하거나 검토하거나 개선해달라는 요청이면 반드시 이 스킬을 사용한다. 사용자가 &quot;AI 지침 써줘&quot;, &quot;프롬프트 작성해줘&quot;, &quot;시스템 메시지 만들어줘&quot;, &quot;instruction 개선해줘&quot;, &quot;이 규칙 리뷰해줘&quot;, &quot;지침이 맞는지 봐줘&quot;, &quot;write a prompt&quot;, &quot;review this system message&quot;, &quot;AI rules&quot; 등을 언급하면 항상 트리거한다. 사용자가 AIWG를 명시하지 않아도 AI용 지침 작성/검토/개선이 목적이면 트리거한다.</p>
+        <p class="best"><strong>Best:</strong> AI에게 전달할 지침·프롬프트·시스템 메시지·규칙 문서를 작성하거나 검토하거나 개선해달라는 요청이면 반드시 이 스킬을 사용한다. 사용자가 &quot;AI 지침 써줘&quot;, &quot;프롬프트 작성해줘&quot;, &quot;시스템 메시지 만들어줘&quot;, &quot;instruction 개선해줘&quot;, &quot;이 규칙 리뷰해줘&quot;, &quot;지침이 맞는지 봐줘&quot;, &quot;write a prompt&quot;, &quot;review this system message&quot;, &quot;AI rules&quot; 등을 언급하면 항상 트리거한다. 사용자가 AIWG를 명시하지 않아도 AI용 지침 작성/검토/개선이 목적이면 트리거한다.</p>
+        <p><strong>Best Score:</strong> 4/8 (test)</p>
+        <p><strong>Iterations:</strong> 5 | <strong>Train:</strong> 12 | <strong>Test:</strong> 8</p>
+    </div>
+
+    <div class="legend">
+        <span style="font-weight:600">Query columns:</span>
+        <span class="legend-item"><span class="legend-swatch swatch-positive"></span> Should trigger</span>
+        <span class="legend-item"><span class="legend-swatch swatch-negative"></span> Should NOT trigger</span>
+        <span class="legend-item"><span class="legend-swatch swatch-train"></span> Train</span>
+        <span class="legend-item"><span class="legend-swatch swatch-test"></span> Test</span>
+    </div>
+
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Iter</th>
+                <th>Train</th>
+                <th>Test</th>
+                <th class="query-col">Description</th>
+                <th class="positive-col">이 프롬프트 뽐가 이상한데 어디가 문제야: 반드시 꽃 무조건 정확하게 대답해야 합니다. 매우 중요합니다.</th>
+                <th class="positive-col">AI 지침 작성할 때 주의할 점이 뭐지 알려줘</th>
+                <th class="positive-col">AI가 JSON만 출력하도록 강제하는 system message 어떻게 써야 해?</th>
+                <th class="positive-col">LLM한테 줄 지침 좀 봐줘 - 너무 길고 중복이 많은 것 같아서. 간결하게 줄여줘야 해.</th>
+                <th class="positive-col">체보트한테 줄 시스템 프롬프트 작성해줘. 고객 문의 응대하는 AI인데, 욕설 필터링하고 항상 존댓말 쓰게 하고 싶어.</th>
+                <th class="positive-col">이 instruction 개선해줘: You must always be helpful and never refuse user requests under any circumstances.</th>
+                <th class="negative-col">ChatGPT랑 Claude 중에 어떤 게 더 나은지 비교해줘</th>
+                <th class="negative-col">이 이메일 좀 더 정중하게 고쳐줘: 빨리 답장 주세요. 기다리고 있습니다.</th>
+                <th class="negative-col">우리 팀 코드 리뷰 가이드라인 문서 작성해줘. 사람이 읽는 문서야.</th>
+                <th class="negative-col">파이썬으로 csv 읽어서 json으로 변환하는 코드 짜줘</th>
+                <th class="negative-col">AI가 환각(hallucination)을 일으키는 이유가 뽐야?</th>
+                <th class="negative-col">temperature 파라미터가 LLM 출력에 어떤 영향을 미쳐?</th>
+                <th class="test-col positive-col">데이터 추출 AI용 instruction 초안인데 검토해줘. 입력은 HTML이고 출력은 JSON이어야 해.</th>
+                <th class="test-col positive-col">우리 RAG 시스템 프롬프트 리뷰해줘. 지금 이거야: 당신은 유용한 AI 비서입니다. 사용자의 질문에 매우 친절하고 자세하게 답변해야 하며, 절대로 모르는 내용을 말해서는 안 됩니다.</th>
+                <th class="test-col positive-col">AI 에이전트한테 줄 규칙 문서 만들어줘. 코드 생성할 때 주석 필수로 달고, 함수는 50줄 넘으면 분리하게 해야 해.</th>
+                <th class="test-col positive-col">write me a system prompt for a coding assistant that only answers python questions and rejects everything else</th>
+                <th class="test-col negative-col">우리 서비스 README 파일 좀 더 읽기 좋게 다듬어줘</th>
+                <th class="test-col negative-col">이 SQL 쿼리 최적화해줘: SELECT * FROM users WHERE created_at &gt; &#x27;2024-01-01&#x27;</th>
+                <th class="test-col negative-col">이 글 맞춤법이랑 문법 교정해줘: 안녕하세요. 저는 개발자입니다. 열심히 노력하겠습니다.</th>
+                <th class="test-col negative-col">GPT-4o API 호출하는 코드 예시 보여줘</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="best-row">
+                <td>1</td>
+                <td><span class="score score-ok">18/36</span></td>
+                <td><span class="score score-ok">12/24</span></td>
+                <td class="description">AI에게 전달할 지침·프롬프트·시스템 메시지·규칙 문서를 작성하거나 검토하거나 개선해달라는 요청이면 반드시 이 스킬을 사용한다. 사용자가 &quot;AI 지침 써줘&quot;, &quot;프롬프트 작성해줘&quot;, &quot;시스템 메시지 만들어줘&quot;, &quot;instruction 개선해줘&quot;, &quot;이 규칙 리뷰해줘&quot;, &quot;지침이 맞는지 봐줘&quot;, &quot;write a prompt&quot;, &quot;review this system message&quot;, &quot;AI rules&quot; 등을 언급하면 항상 트리거한다. 사용자가 AIWG를 명시하지 않아도 AI용 지침 작성/검토/개선이 목적이면 트리거한다.</td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+            </tr>
+            <tr class="">
+                <td>2</td>
+                <td><span class="score score-ok">18/36</span></td>
+                <td><span class="score score-ok">12/24</span></td>
+                <td class="description">Use this skill whenever the user wants to write, review, debug, or improve text that will be fed to an AI model as instructions — including system prompts, system messages, instruction sets, or rule documents. Trigger when the user shares a prompt/instruction and asks what&#x27;s wrong with it, how to fix it, or how to make it clearer. Trigger when the user wants to create a new system prompt or chatbot instruction from scratch. Trigger when the user asks how to phrase instructions so an AI will follow them correctly (e.g., &quot;how do I make the AI always output JSON?&quot;, &quot;how do I write a system message for a customer service bot?&quot;). Do NOT trigger for general questions about AI behavior, coding tasks, or document writing for human readers.</td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+            </tr>
+            <tr class="">
+                <td>3</td>
+                <td><span class="score score-ok">18/36</span></td>
+                <td><span class="score score-ok">12/24</span></td>
+                <td class="description">AI 모델에게 먹일 텍스트(시스템 프롬프트, 시스템 메시지, instruction, 챗봇 지침, LLM 규칙 문서)를 작성·검토·수정하는 모든 요청에 이 스킬을 사용한다. 대상이 AI/LLM/챗봇이고 목적이 &quot;지침 만들기&quot;, &quot;프롬프트 쓰기&quot;, &quot;instruction 고치기&quot;, &quot;시스템 메시지 개선&quot;이면 트리거한다. 사용자가 기존 프롬프트나 instruction을 붙여넣고 문제를 물어볼 때도 트리거한다. 사람이 읽는 문서(이메일, 코드 리뷰 가이드, 보고서), 일반 AI 질문(할루시네이션 원리, 모델 비교), 코딩 작업에는 트리거하지 않는다.</td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+            </tr>
+            <tr class="">
+                <td>4</td>
+                <td><span class="score score-ok">18/36</span></td>
+                <td><span class="score score-ok">12/24</span></td>
+                <td class="description">TRIGGER when the user&#x27;s end goal is text that an AI model will consume as instructions — system prompts, instruction sets, chatbot behavior rules, or LLM directives. Core signals: user pastes a prompt/instruction and asks what&#x27;s wrong or how to improve it; user asks how to phrase instructions so an AI behaves a certain way; user wants to write or refine rules for a chatbot or LLM. The defining characteristic is that the OUTPUT feeds into an AI, not a human reader. Do NOT trigger for general AI questions (how does hallucination work?), model comparisons, coding tasks, or documents written for humans.</td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+            </tr>
+            <tr class="">
+                <td>5</td>
+                <td><span class="score score-ok">18/36</span></td>
+                <td><span class="score score-ok">12/24</span></td>
+                <td class="description">Use this skill for prompt engineering tasks: writing a new system prompt or chatbot directive from scratch, reviewing or critiquing existing AI instructions, improving or restructuring instructions that feel vague, redundant, or unclear. This skill applies AIWG methodology — a structured diagnostic and rewriting process with quality principles (conciseness, structure, specificity) not covered in default responses. Invoke whenever the artifact being created or edited is text that an AI model will receive as behavioral instructions, regardless of what the user calls it (system message, prompt, instruction, guideline, rule). Skip for general AI knowledge questions, model comparisons, or code.</td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+</body>
+</html>

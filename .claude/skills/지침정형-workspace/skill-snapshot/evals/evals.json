@@ -1,0 +1,74 @@
+{
+  "skill_name": "aiwg",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "이 AI 지침 좀 검토하고 개선해줘:\n\n우리 서비스의 고객 응대 AI는 매우 중요한 역할을 담당하고 있으므로 반드시 친절하고 정중하게 응답해야 하며, 고객이 어떤 질문을 하더라도 절대로 모른다거나 답변할 수 없다는 말을 해서는 안 됩니다. 그리고 그것을 처리할 때에는 항상 먼저 공감을 표현한 다음에 해결책을 제시하는 방식으로 진행해야 하고, 만약 고객이 환불이나 보상을 요구하는 경우에는 필요한 경우 상위 부서로 에스컬레이션할 수 있습니다.",
+      "expected_output": "진단 표(위반 항목 식별) + AIWG 템플릿 적용 개선안 + 변경 요약",
+      "assertions": [
+        {
+          "name": "has_diagnosis_table",
+          "description": "진단 표가 포함되어 있다 (체크리스트 항목과 상태 포함)"
+        },
+        {
+          "name": "has_improved_version",
+          "description": "개선안이 AIWG 템플릿(목적·규칙 섹션)을 사용한다"
+        },
+        {
+          "name": "removes_redundant_emphasis",
+          "description": "개선안에서 '매우 중요하므로 반드시', '절대로' 같은 강조 중첩이 제거된다"
+        },
+        {
+          "name": "replaces_ambiguous_pronoun",
+          "description": "개선안에서 '그것'이 구체적인 명사로 교체된다"
+        },
+        {
+          "name": "has_change_summary",
+          "description": "변경 요약 한 줄이 출력된다"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "코드 리뷰를 수행하는 AI한테 줄 지침을 작성해줘. AI가 PR을 받으면 버그, 보안 취약점, 성능 문제를 체크하고, 각 항목에 심각도(HIGH/MEDIUM/LOW)를 붙여서 리포트를 줬으면 좋겠어.",
+      "expected_output": "AIWG 형식 템플릿으로 작성된 코드 리뷰 지침 (목적·입력·규칙·출력 섹션 포함)",
+      "assertions": [
+        {
+          "name": "uses_aiwg_template",
+          "description": "출력이 목적·입력·규칙·출력 섹션 구조를 따른다"
+        },
+        {
+          "name": "mentions_severity_levels",
+          "description": "HIGH/MEDIUM/LOW 심각도 체계가 규칙 또는 출력 섹션에 포함된다"
+        },
+        {
+          "name": "no_prose_paragraphs",
+          "description": "산문 단락 없이 목록·표 형식만 사용한다"
+        },
+        {
+          "name": "subject_explicit",
+          "description": "모든 규칙 문장에 주어(AI)가 명시된다"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "아래 시스템 프롬프트 괜찮은지 리뷰해줘:\n\nYou are a helpful assistant. Please be very careful and always make sure to provide accurate information. It is extremely important that you never make things up. When the user asks something, think step by step and consider all the possibilities before giving your answer. Make sure your response is comprehensive and covers all aspects of the question.",
+      "expected_output": "영문 지침도 AIWG 기준(간결성·구조성·구체성)으로 진단하고 개선안 제시",
+      "assertions": [
+        {
+          "name": "identifies_redundant_emphasis",
+          "description": "'It is extremely important', 'always make sure', 'very careful' 등 강조 중첩을 위반으로 식별한다"
+        },
+        {
+          "name": "identifies_vague_instruction",
+          "description": "'consider all the possibilities', 'covers all aspects' 같은 모호한 지시를 위반으로 식별한다"
+        },
+        {
+          "name": "provides_improved_version",
+          "description": "구체적이고 구조화된 개선안을 제시한다"
+        }
+      ]
+    }
+  ]
+}
